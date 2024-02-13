@@ -43,9 +43,9 @@ function resolveArgs() {
     if (outputPath != '') {
         const fs = require('fs');
         fs.writeFileSync(outputPath.replace(".swift",'')+".swift", convertedCode);
+    } else {
+        console.log(convertedCode);
     }
-    
-    console.log(convertedCode);
 }
 
 resolveArgs();

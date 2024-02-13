@@ -1,9 +1,9 @@
-import { ignoredTags } from "../rules";
+import { ignoredTags } from "../Utils/rules";
 import { XibNode } from "../types";
 import { resolveIdToPropetyName } from "./XibManipulator"
 
 export class ViewHierachyGen {
-    public generateViewHierachy(subview: XibNode){
+    public generateViewHierachy(subview: XibNode) {
         let heriachyDeclaration: string = '';
         let fatherId = subview.father?.attrs.id;
         let addMethod = subview.father?.tag == 'stackView' ? 'addArrangedSubview' : 'addSubview';
@@ -14,5 +14,13 @@ export class ViewHierachyGen {
             }
         }
         return heriachyDeclaration;
+    }
+
+    public generateCompleteViewHierachy(subviews: XibNode[]) {
+        let heriachyDeclaration: string = '';
+        for (const subview of subviews) {
+            heriachyDeclaration += this.generateViewHierachy(subview);
+        }
+        return heriachyDeclaration
     }
 }

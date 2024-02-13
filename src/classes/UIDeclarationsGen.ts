@@ -1,14 +1,15 @@
-import { aditionalConfiguration, uiDeclaraitonConfig, XibNode } from "../types";
-import { shouldIgnoreProperty, ignoredTags, defaultRules, rules } from "../rules";
+import { aditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types";
+import { shouldIgnoreProperty, ignoredTags, defaultRules, rules } from "../Utils/rules";
 import { Resolve } from "./CommonResolve";
 import { capitalizeFirstLetter, lowerFirstletter } from "../Utils";
 import { resolveIdToPropetyName } from "./XibManipulator";
 
 export class UIDeclarationsGen {
 
-    private declationConfig: uiDeclaraitonConfig = this.setupDeclarationConfig();
+    private declationConfig: UIDeclaraitonConfig = this.setupDeclarationConfig();
+    private uiDeclarationsList: UIDeclaration[] = []
 
-    private setupDeclarationConfig(node?: XibNode): uiDeclaraitonConfig {
+    private setupDeclarationConfig(node?: XibNode): UIDeclaraitonConfig {
         return {
             visibliityModifier: 'private ',
             type: `UI${capitalizeFirstLetter(node?.tag ?? '')}`,
@@ -25,22 +26,41 @@ export class UIDeclarationsGen {
         return uiDeclarations;
     }
 
+    public generateUIDelarationsAsList(subviews: XibNode[]): UIDeclaration[] {
+        this.uiDeclarationsList = []
+        for (const subview of subviews) {
+            this.resolveUIDeclaration(subview.content);
+        }
+        return this.uiDeclarationsList
+    }
+
     private resolveUIDeclaration(nodes: XibNode[]): string {
         let uiDeclarations: string = '';
         nodes = nodes.filter(node => ignoredTags.includes(node.tag) == false);
     
         for (const node of nodes) {
             this.declationConfig = this.setupDeclarationConfig(node);
+            let nodeTag: string = node.tag;
+            let viewName: string = resolveIdToPropetyName(node.attrs.id);
             let properties: string = this.resolveAtributes(node);
             properties += `${this.generateDeclarationForSubNodes(node.tag, node.content)}`;
 
-            uiDeclarations += `\n${this.declationConfig.visibliityModifier}lazy var ${resolveIdToPropetyName(node.attrs.id)}: ${this.declationConfig.type} = {\n` + 
-                              `${this.declationConfig.beforeInstaceProperties}`+
-                              `\tlet ${node.tag} = ${this.declationConfig.type}${this.declationConfig.intializationMethod}` +
-                              `${properties}` +
-                              `\treturn ${node.tag}\n}()\n`;
+            let uiDeclaration: string = this.buildUIDeclaration(viewName, nodeTag, properties);
+            uiDeclarations += uiDeclaration
+            this.uiDeclarationsList.push({
+                viewName: viewName,
+                declaration: uiDeclaration
+            });
         }
         return uiDeclarations;
+    }
+
+    private buildUIDeclaration(viewName: string, nodeTag: string, properties: string): string {
+        return `\n${this.declationConfig.visibliityModifier}let ${viewName}: ${this.declationConfig.type} = {\n` + 
+                `${this.declationConfig.beforeInstaceProperties}`+
+                `\tlet ${nodeTag} = ${this.declationConfig.type}${this.declationConfig.intializationMethod}` +
+                `${properties}` +
+                `\treturn ${nodeTag}\n}()\n`;
     }
 
     private resolveAtributes(node: XibNode): string {

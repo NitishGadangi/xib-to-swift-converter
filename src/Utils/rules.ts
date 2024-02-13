@@ -1,4 +1,4 @@
-import { Rules } from "./types";
+import { Rules } from "../types";
 
 export const ignoredTags: string[] = []
 
@@ -15,7 +15,7 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
         imageView: ['catalog'],
         tableView: ['style'],
         collectionView: ['dataMode'],
-        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth'],
+        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider'],
     }
     let ignoredRules =  propertyToIgnore['common'] + propertyToIgnore[tag];
     return ignoredRules.includes(key);

@@ -40,9 +40,14 @@ export interface Constraint {
     declaration: string
 }
 
-export interface uiDeclaraitonConfig {
+export interface UIDeclaraitonConfig {
     visibliityModifier: string,
     type: string,
     intializationMethod: string,
     beforeInstaceProperties: string,
+}
+
+export interface UIDeclaration {
+    viewName: string,
+    declaration: string
 }
