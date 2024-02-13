@@ -3,6 +3,7 @@ import { ViewHierachyGen } from './classes/ViewHierachyGen';
 import { ConstraintsDeclaritonsGen } from './classes/ConstraintsDeclaritonsGen';
 import { Xib } from './classes/XibManipulator';
 import { UIDeclaration } from './types';
+import { AnotationConstants, RegularExpressions } from './Utils/constants';
 
 export class Xib2Swift {
     private readonly xib: Xib;
@@ -32,9 +33,44 @@ export class Xib2Swift {
             '\n// MARK: - Base View Properties\n\n' + this.baseViewProperties.replaceAll('\t', '');
     }
 
-    public convertWithSwiftFile(swiftFile: string): string {
-        let setupViewsInExtension: string = '';
+    public convertWithSwiftFile(inputSwiftCode: string): string {
+        let swiftCodeWithOutletsReplaced: string = this.replaceOutletsWithUIDeclarations(inputSwiftCode);
+        let viewSetupCode: string = ''
+        return swiftCodeWithOutletsReplaced +
+            '\n// TODO: check if setupViews func is called from init, viewDidLoad\n' +
+            viewSetupCode;
+    }
 
-        return swiftFile + setupViewsInExtension;
+    private replaceOutletsWithUIDeclarations(swiftFile: string): string {
+        let swiftFileAsArray: string[] = swiftFile.split('\n');
+        let replacedDeclarations: string[] = [];
+        let lastReplacedIndex = swiftFileAsArray.length - 1;
+        for (let codeIdx = 0; codeIdx < swiftFileAsArray.length; codeIdx++) {
+            let codeLine = swiftFileAsArray[codeIdx];
+            for (let decIdx = 0; decIdx < this.uiDeclarationsAsList.length; decIdx++) {
+                let uiDeclaration = this.uiDeclarationsAsList[decIdx];
+                let regexPattern: RegExp = RegularExpressions.IBOUTLET_VARNAME(uiDeclaration.viewName);
+                if (regexPattern.test(codeLine)) {
+                    swiftFileAsArray[codeIdx] = uiDeclaration.declaration;
+                    replacedDeclarations.push(uiDeclaration.viewName);
+                    lastReplacedIndex = codeIdx;
+                    break;
+                }
+            }
+            let finalCodeLine = swiftFileAsArray[codeIdx];
+            if (finalCodeLine.includes(AnotationConstants.IB_ACTION)) {
+                swiftFileAsArray[codeIdx] = finalCodeLine.replace(AnotationConstants.IB_ACTION, AnotationConstants.OBJC);
+            }
+        }
+
+        let remainingDeclarations: string = ''
+        for (let decIdx = 0; decIdx < this.uiDeclarationsAsList.length; decIdx++) {
+            let uiDeclaration = this.uiDeclarationsAsList[decIdx];
+            if (replacedDeclarations.includes(uiDeclaration.viewName)) continue;
+            remainingDeclarations += uiDeclaration.declaration;
+        }
+        swiftFileAsArray[lastReplacedIndex] += '\n// MARK: - Additional UI Elements\n' + remainingDeclarations;
+
+        return swiftFileAsArray.join('\n');
     }
 }
