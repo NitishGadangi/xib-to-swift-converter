@@ -54,6 +54,7 @@ function resolveArgs() {
         const fs = require('fs');
         fs.writeFileSync(outputPath.replace(".swift",'')+".swift", convertedCode);
         console.log(' Success! Output is written to file : ' + outputPath);
+        console.log(' Make sure you delete xib file and make necessary changes needed in swift file, if any ! ');
     } else {
         console.log(convertedCode);
     }
