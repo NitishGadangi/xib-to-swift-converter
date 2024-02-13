@@ -1,5 +1,5 @@
 {
-  "name": "xib2swift",
+  "name": "xib-to-swift-converter",
   "devDependencies": {
     "@types/node": "^18.11.9",
     "ts-loader": "^9.4.2",
