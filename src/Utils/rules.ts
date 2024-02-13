@@ -15,9 +15,9 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
         imageView: ['catalog'],
         tableView: ['style'],
         collectionView: ['dataMode'],
-        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider'],
+        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider'],
     }
-    let ignoredRules =  propertyToIgnore['common'] + propertyToIgnore[tag];
+    let ignoredRules = propertyToIgnore['common'] + propertyToIgnore[tag];
     return ignoredRules.includes(key);
 }
 
@@ -37,7 +37,7 @@ export const rules: Rules = {
         prefetchingEnabled: 'isPrefetchingEnabled',
     },
     common: {
-        clipSubviews: 'clipsToBounds',
+        clipsSubviews: 'clipsToBounds',
         opaque: 'isOpaque',
         userInteractionEnabled: 'isUserInteractionEnabled',
     }
