@@ -14,14 +14,17 @@
         <button id="generate-button">Convert</button>
     </div>
     <div id="box">
-        <div id="firstbox">
-            <textarea name="input-Text" id="input-Text" cols="30" rows="10"></textarea>
+        <div class="textbox">
+            <textarea name="input-Text" id="input-Text" cols="30" rows="10" placeholder="Add xib file code here"></textarea>
         </div>
-        <div id="secondbox">
-            <textarea name="output-Text" id="output-Text" cols="30" rows="10"></textarea>
+        <div class="textbox">
+            <textarea name="swift-code" id="swift-code" cols="30" rows="10" placeholder="(optional) Add corresponding swift(View/ViewController) file code here to inject View Declarations, Hierarchy and Constrains inplace."></textarea>
+        </div>
+        <div class="textbox">
+            <textarea name="output-Text" id="output-Text" cols="30" rows="10" placeholder="Output will be generated here"></textarea>
         </div>
     </div>
-    <script src="bundle.js" ></script>
+    <script src="bundle.js"></script>
 </body>
 
 </html>

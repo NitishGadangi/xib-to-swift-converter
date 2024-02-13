@@ -7,39 +7,47 @@ function resolveArgs() {
         process.exit(1);
     }
     let path = argv[2];
-    let string = '';
+    let xibString = '';
     let outputPath = '';
     argv.forEach((val, index) => {
         if (val == '-h' || val == '--help') {
             console.log('Basic usage: xib2swift <path-to-xib-file>');
             console.log('Options:');
             console.log(' -p, --path <path-to-xib-file>  Path to xib file');
-            console.log(' -o, --outputPath <path-to-output-file>  Path to output file');
-            console.log(' -s, --string <xib-string>  xib string');
+            console.log(' -o, --output-path <path-to-output-swift-file> Provide Corresponding swift(View/ViewController) file path to inject View Declarations, Hierarchy and Constraings inplace.');
+            console.log(' -x, --xib-string <xib-string>  xib string');
             console.log(' -h, --help  Display this help message');
             process.exit(0);
         }
         else if (val == '-p' || val == '--path') {
             path = argv[index + 1];
         }
-        else if (val == "-s" || val == "--string") {
-            string = argv[index + 1];
+        else if (val == "-x" || val == "--xib-string") {
+            xibString = argv[index + 1];
         }
-        else if (val == '-o' || val == '--outputPath') {
+        else if (val == '-o' || val == '--output-path') {
             outputPath = argv[index + 1];
         }
     });
 
     let convertedCode = '';
-    if (string != '') {
-        let xib2swift = new Xib2Swift(string);
+    if (xibString != '') {
+        let xib2swift = new Xib2Swift(xibString);
         convertedCode = xib2swift.convert();
     }
     else if (path != '') {
         const fs = require('fs');
-        let xibFile = fs.readFileSync(path, 'utf8')
-        let xib2swift = new Xib2Swift(xibFile)
-        convertedCode = xib2swift.convert();
+        let xibFile = fs.readFileSync(path, 'utf8');
+        let xib2swift = new Xib2Swift(xibFile);
+        let swiftFile = '' 
+        if (outputPath != '') {
+            swiftFile = fs.readFileSync(outputPath, 'utf8');
+        }
+        if (swiftFile != '') {
+            convertedCode = xib2swift.convertWithSwiftFile(swiftFile);
+        } else {
+            convertedCode = xib2swift.convert();
+        }
     }
     
     if (outputPath != '') {

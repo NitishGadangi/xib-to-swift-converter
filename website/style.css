@@ -30,15 +30,8 @@ body {
     resize: none;
 }
 
-#firstbox {
-    width: 50%;
-    height: 100%;
-    border: 1px solid black;
-    padding: 20px;
-
-}
-#secondbox {
-    width: 50%;
+.textbox {
+    width: 33.33%;
     height: 100%;
     border: 1px solid black;
     padding: 20px;
@@ -47,18 +40,12 @@ body {
 textarea {
     width: 100%;
     height: 100%;
+    border: none;
+    resize: none;
 }
 
-
 @media screen and (max-width: 1024px) {
-    #box {
-        flex-wrap: wrap;
-    }
-    #firstbox {
-        width: 100%;
-        height: 50%;
-    }
-    #secondbox {
+    .textbox {
         width: 100%;
         height: 50%;
     }

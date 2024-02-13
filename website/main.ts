@@ -7,9 +7,16 @@ button.addEventListener("click", generate);
 function generate() {
     console.log("Generate");
     const input = document.getElementById("input-Text") as HTMLTextAreaElement;
+    const swiftCodeElement = document.getElementById("swift-code") as HTMLTextAreaElement;
     let xib = input.value;
+    let swiftCode = swiftCodeElement.value;
     const output = document.getElementById("output-Text") as HTMLTextAreaElement;
     let xib2swift = new Xib2Swift(xib)
-    let viewcode = xib2swift.convert();
+    let viewcode = '';
+    if (swiftCode != '') {
+        viewcode = xib2swift.convertWithSwiftFile(swiftCode);
+    } else {
+        viewcode = xib2swift.convert();
+    }
     output.value = viewcode;
 }
