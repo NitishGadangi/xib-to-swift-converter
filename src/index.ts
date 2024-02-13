@@ -1,4 +1,4 @@
-import { xib2swift } from './xib2swift';
+import { Xib2Swift } from './xib2swift';
 import { argv } from 'process';
 
 function resolveArgs() {
@@ -32,12 +32,14 @@ function resolveArgs() {
 
     let convertedCode = '';
     if (string != '') {
-        convertedCode = xib2swift(string);
+        let xib2swift = new Xib2Swift(string);
+        convertedCode = xib2swift.convert();
     }
     else if (path != '') {
         const fs = require('fs');
         let xibFile = fs.readFileSync(path, 'utf8')
-        convertedCode = xib2swift(xibFile);
+        let xib2swift = new Xib2Swift(xibFile)
+        convertedCode = xib2swift.convert();
     }
     
     if (outputPath != '') {

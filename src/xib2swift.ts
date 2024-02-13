@@ -2,39 +2,39 @@ import { UIDeclarationsGen } from './classes/UIDeclarationsGen';
 import { ViewHierachyGen } from './classes/ViewHierachyGen';
 import { ConstraintsDeclaritonsGen } from './classes/ConstraintsDeclaritonsGen';
 import { Xib } from './classes/XibManipulator';
+import { UIDeclaration } from './types';
 
-export function xib2swift(xibFile: string): string {
+export class Xib2Swift {
+    private readonly xib: Xib;
+    private readonly uiDeclarations: string;
+    private readonly uiDeclarationsAsList: UIDeclaration[];
+    private readonly viewHierarchy: string;
+    private readonly constraintDeclarations: string;
+    private readonly baseViewProperties: string;
 
-    const xib = new Xib(xibFile);
+    constructor(xibFile: string) {
+        this.xib = new Xib(xibFile);
+        const subviews = this.xib.subviews;
+        const uiDeclarationsGenerator = new UIDeclarationsGen();
+        const viewHierarchyGenerator = new ViewHierachyGen();
+        const constraintsGenerator = new ConstraintsDeclaritonsGen();
+        this.uiDeclarations = uiDeclarationsGenerator.generateUIDeclarations(subviews);
+        this.uiDeclarationsAsList = uiDeclarationsGenerator.generateUIDelarationsAsList(subviews);
+        this.viewHierarchy = viewHierarchyGenerator.generateCompleteViewHierachy(subviews);
+        this.baseViewProperties = uiDeclarationsGenerator.genereteBaseViewProperties(this.xib.baseView);
+        this.constraintDeclarations = constraintsGenerator.generateConstraintsDeclarations(this.xib.constraints);
+    }
 
-    const uiDeclarationsGen = new UIDeclarationsGen();
-    const viewHierchyGen = new ViewHierachyGen();
-    const constraintsDeclarationsGen = new ConstraintsDeclaritonsGen();
-    
-    let uiDeclarations =  uiDeclarationsGen.generateUIDeclarations(xib.subviews);
-    let constraintsDeclarations = constraintsDeclarationsGen.generateConstraintsDeclarations(xib.constraints);
-    let viewHierachy = viewHierchyGen.generateCompleteViewHierachy(xib.subviews);
-    let baseViewDeclaration = uiDeclarationsGen.genereteBaseViewProperties(xib.baseView);
-    
-    return '\n// MARK: - UI Elements\n' + uiDeclarations + 
-    '\n// MARK: - View Hierachy\n\n' + viewHierachy +  
-    '\n// MARK: - Constrains\n\n' + constraintsDeclarations +
-    '\n// MARK: - Base View Properties\n\n' + baseViewDeclaration.replaceAll('\t', '');
-}
+    public convert(): string {
+        return '\n// MARK: - UI Elements\n' + this.uiDeclarations +
+            '\n// MARK: - View Hierachy\n\n' + this.viewHierarchy +
+            '\n// MARK: - Constrains\n\n' + this.constraintDeclarations +
+            '\n// MARK: - Base View Properties\n\n' + this.baseViewProperties.replaceAll('\t', '');
+    }
 
-export function xib2swiftInPlace(xibFile: string, outputSwiftFile: string): string {
-    const xib = new Xib(xibFile);
-    const uiDeclarationsGen = new UIDeclarationsGen();
-    const viewHierchyGen = new ViewHierachyGen();
-    const constraintsDeclarationsGen = new ConstraintsDeclaritonsGen();
+    public convertWithSwiftFile(swiftFile: string): string {
+        let setupViewsInExtension: string = '';
 
-    let uiDeclarationsList =  uiDeclarationsGen.generateUIDelarationsAsList(xib.subviews);
-    let constraintsDeclarations = constraintsDeclarationsGen.generateConstraintsDeclarations(xib.constraints);
-    let viewHierachy = viewHierchyGen.generateCompleteViewHierachy(xib.subviews);
-    let baseViewDeclaration = uiDeclarationsGen.genereteBaseViewProperties(xib.baseView);
-
-    let setupViewsInExtension: string = ''
-
-
-    return outputSwiftFile + setupViewsInExtension
+        return swiftFile + setupViewsInExtension;
+    }
 }
