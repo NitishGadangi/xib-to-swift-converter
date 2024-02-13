@@ -7,6 +7,7 @@ export class Xib {
     private xibNodes: XibNode[] = [];
     private outlets: Outlet[] = [];
 
+    public className: string = '<#ClassName#>'
     public baseView: XibNode | undefined;
     public constraints: XibNode[] = [];
     public subviews: XibNode[] = [];
@@ -58,6 +59,11 @@ export class Xib {
                 case 'viewLayoutGuide':
                     this.tableIDtoName[node.attrs.id] = "view.safeAreaLayoutGuide"
                     break;
+                case 'placeholder':
+                    if (node.attrs.placeholderIdentifier == 'IBFilesOwner' && node.attrs.customClass != '') {
+                        this.className = node.attrs.customClass
+                    }
+                    break;
                 default:
                     break;
             }
@@ -68,7 +74,7 @@ export class Xib {
             }
             this.navigateGettingInterestPoints(node.content);
         }
-    }    
+    }
 
     private resolveBaseView(node: XibNode): void {
         let father = node.father;
