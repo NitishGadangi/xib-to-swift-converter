@@ -3,7 +3,7 @@ import { argv } from 'process';
 
 function resolveArgs() {
     if (argv.length < 3) {
-        console.log('Usage: xib2swift <path-to-xib-file>');
+        console.log('For usage details: xib-to-swift-converter --help');
         process.exit(1);
     }
     let path = argv[2];
@@ -11,10 +11,10 @@ function resolveArgs() {
     let outputPath = '';
     argv.forEach((val, index) => {
         if (val == '-h' || val == '--help') {
-            console.log('Basic usage: xib2swift <path-to-xib-file>');
+            console.log('Basic usage: xib-to-swift-converter <path-to-xib-file>');
             console.log('Options:');
             console.log(' -p, --path <path-to-xib-file>  Path to xib file');
-            console.log(' -o, --output-path <path-to-output-swift-file> Provide Corresponding swift(View/ViewController) file path to inject View Declarations, Hierarchy and Constraings inplace.');
+            console.log(' -o, --output-path <path-to-output-swift-file> Provide Corresponding swift(View/ViewController) file path to inject View Declarations, Hierarchy and Constraints inplace.');
             console.log(' -x, --xib-string <xib-string>  xib string');
             console.log(' -h, --help  Display this help message');
             process.exit(0);
@@ -53,6 +53,7 @@ function resolveArgs() {
     if (outputPath != '') {
         const fs = require('fs');
         fs.writeFileSync(outputPath.replace(".swift",'')+".swift", convertedCode);
+        console.log(' Success! Output is written to file : ' + outputPath);
     } else {
         console.log(convertedCode);
     }
