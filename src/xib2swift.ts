@@ -35,9 +35,10 @@ export class Xib2Swift {
 
     public convertWithSwiftFile(inputSwiftCode: string): string {
         let swiftCodeWithOutletsReplaced: string = this.replaceOutletsWithUIDeclarations(inputSwiftCode);
-        let viewSetupCode: string = ''
+        let viewSetupCode: string = this.buildViewSetupCode();
         return swiftCodeWithOutletsReplaced +
-            '\n// TODO: check if setupViews func is called from init, viewDidLoad\n' +
+            '\n// TODO: add setupViews func in init, viewDidLoad\n' +
+            '//TODO: This feature is still in Beta. Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
             viewSetupCode;
     }
 
@@ -72,5 +73,22 @@ export class Xib2Swift {
         swiftFileAsArray[lastReplacedIndex] += '\n// MARK: - Additional UI Elements\n' + remainingDeclarations;
 
         return swiftFileAsArray.join('\n');
+    }
+
+    private buildViewSetupCode(): string {
+        return '\n' +
+            'extension '+ this.xib.className +' {\n' +
+            '\tfunc setupViews() {\n' +
+            '\t\t' + this.baseViewProperties.replaceAll('\t', '') + '\n' +
+            '\t\taddSubViews()\n' +
+            '\t\tsetupConstraints()\n' +
+            '\t}\n' +
+            '\tfunc addSubViews() {\n' + 
+            '\t\t' + this.viewHierarchy + '\n' +
+            '\t}\n' +
+            '\tfunc setupConstraints() {\n' +
+            '\t\t' + this.constraintDeclarations + '\n' +
+            '\t}\n' +
+            '}\n';
     }
 }
