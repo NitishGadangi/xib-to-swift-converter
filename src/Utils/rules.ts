@@ -15,7 +15,7 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
         imageView: ['catalog'],
         tableView: ['style'],
         collectionView: ['dataMode'],
-        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider'],
+        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider', 'misplaced', 'userLabel'],
     }
     let ignoredRules = propertyToIgnore['common'] + propertyToIgnore[tag];
     return ignoredRules.includes(key);

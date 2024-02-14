@@ -38,7 +38,7 @@ export class Xib2Swift {
         let viewSetupCode: string = this.buildViewSetupCode();
         return swiftCodeWithOutletsReplaced +
             '\n// TODO: add setupViews func in init, viewDidLoad\n' +
-            '//TODO: This feature is still in Beta. Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
+            '// TODO: This feature is still in Beta. Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
             viewSetupCode;
     }
 
@@ -52,7 +52,7 @@ export class Xib2Swift {
                 let uiDeclaration = this.uiDeclarationsAsList[decIdx];
                 let regexPattern: RegExp = RegularExpressions.IBOUTLET_VARNAME(uiDeclaration.viewName);
                 if (regexPattern.test(codeLine)) {
-                    swiftFileAsArray[codeIdx] = uiDeclaration.declaration;
+                    swiftFileAsArray[codeIdx] = uiDeclaration.declaration.trim() + '\n';
                     replacedDeclarations.push(uiDeclaration.viewName);
                     lastReplacedIndex = codeIdx;
                     break;
@@ -76,7 +76,7 @@ export class Xib2Swift {
     }
 
     private buildViewSetupCode(): string {
-        return '\n' +
+        return '' +
             'extension '+ this.xib.className +' {\n' +
             '\tfunc setupViews() {\n' +
             '\t\t' + this.baseViewProperties.replaceAll('\t', '') + '\n' +

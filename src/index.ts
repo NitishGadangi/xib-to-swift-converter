@@ -55,6 +55,7 @@ function resolveArgs() {
         fs.writeFileSync(outputPath.replace(".swift",'')+".swift", convertedCode);
         console.log(' Success! Output is written to file : ' + outputPath);
         console.log(' Make sure you delete xib file and make necessary changes needed in swift file, if any ! ');
+        console.log(' Check for any indentation errors. You can fix them by using CMD A + Ctrl I . ');
     } else {
         console.log(convertedCode);
     }
