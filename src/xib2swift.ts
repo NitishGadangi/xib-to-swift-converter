@@ -82,10 +82,10 @@ export class Xib2Swift {
             '\t\t' + this.baseViewProperties.replaceAll('\t', '') + '\n' +
             '\t\taddSubViews()\n' +
             '\t\tsetupConstraints()\n' +
-            '\t}\n' +
+            '\t}\n\n' +
             '\tfunc addSubViews() {\n' + 
             '\t\t' + this.viewHierarchy + '\n' +
-            '\t}\n' +
+            '\t}\n\n' +
             '\tfunc setupConstraints() {\n' +
             '\t\t' + this.constraintDeclarations + '\n' +
             '\t}\n' +
