@@ -1,5 +1,5 @@
-import { XibNode, Constraint, Constraints } from "../types";
-import { resolveIdToPropetyName } from "./XibManipulator";
+import { XibNode, Constraint, Constraints } from "../types/entities";
+import { resolveIdToPropetyName } from "../types/xib_model";
 
 export class ConstraintsDeclaritonsGen {
 

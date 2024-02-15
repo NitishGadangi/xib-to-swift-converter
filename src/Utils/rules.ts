@@ -1,13 +1,15 @@
-import { Rules } from "../types";
+import { Rules } from "../types/entities";
 
 export const ignoredTags: string[] = []
 
+// properties + value combinations to ignore
 export const defaultRules: any = {
     opaque: 'isOpaque = false',
     userInteractionEnabled: 'isUserInteractionEnabled = false',
     customClass: 'customClass = ',
 }
 
+// properties to ignore
 export function shouldIgnoreProperty(tag: string, key: string): boolean {
     const propertyToIgnore: any = {
         label: ['minimumFontSize'],
@@ -21,7 +23,7 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
     return ignoredRules.includes(key);
 }
 
-// Add only tags that have different name in swift
+// xib properties which are named differently in swift uikit
 export const rules: Rules = {
     label: {
         adjustsFontSizeToFit: 'adjustsFontSizeToFitWidth',

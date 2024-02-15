@@ -1,4 +1,4 @@
-import { Xib2Swift } from "../src/xib2swift";
+import { Xib2Swift } from "../src/builders/xib2swift";
 
 const button = document.getElementById("generate-button") as HTMLButtonElement;
 

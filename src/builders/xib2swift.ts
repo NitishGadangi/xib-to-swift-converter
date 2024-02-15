@@ -1,9 +1,9 @@
-import { UIDeclarationsGen } from './classes/UIDeclarationsGen';
-import { ViewHierachyGen } from './classes/ViewHierachyGen';
-import { ConstraintsDeclaritonsGen } from './classes/ConstraintsDeclaritonsGen';
-import { Xib } from './classes/XibManipulator';
-import { UIDeclaration } from './types';
-import { AnotationConstants, RegularExpressions } from './Utils/constants';
+import { UIDeclarationsGen } from '../resolvers/ui_declarations_resolver';
+import { ViewHierachyGen } from '../resolvers/view_hierarchy_resolver';
+import { ConstraintsDeclaritonsGen } from '../resolvers/constraints_resolver';
+import { Xib } from '../types/xib_model';
+import { UIDeclaration } from '../types/entities';
+import { AnotationConstants, RegularExpressions } from '../utils/constants';
 
 export class Xib2Swift {
     private readonly xib: Xib;

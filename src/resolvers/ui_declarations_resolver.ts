@@ -1,8 +1,8 @@
-import { aditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types";
-import { shouldIgnoreProperty, ignoredTags, defaultRules, rules } from "../Utils/rules";
-import { Resolve } from "./CommonResolve";
-import { capitalizeFirstLetter, lowerFirstletter } from "../Utils";
-import { resolveIdToPropetyName } from "./XibManipulator";
+import { aditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types/entities";
+import { shouldIgnoreProperty, ignoredTags, defaultRules, rules } from "../utils/rules";
+import { Resolve } from "./common_resolver";
+import { capitalizeFirstLetter, lowerFirstletter } from "../utils/utils";
+import { resolveIdToPropetyName } from "../types/xib_model";
 
 export class UIDeclarationsGen {
 

@@ -1,4 +1,4 @@
-import { XibNode } from "../types";
+import { XibNode } from "../types/entities";
 
 
 export class Resolve {

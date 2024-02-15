@@ -1,4 +1,4 @@
-import { XibNode, IDtoName, Outlet } from '../types';
+import { XibNode, IDtoName, Outlet } from './entities';
 import { parser } from 'posthtml-parser'
 
 export class Xib {

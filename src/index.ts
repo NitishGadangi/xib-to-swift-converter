@@ -1,4 +1,4 @@
-import { Xib2Swift } from './xib2swift';
+import { Xib2Swift } from './builders/xib2swift';
 import { argv } from 'process';
 
 function resolveArgs() {
