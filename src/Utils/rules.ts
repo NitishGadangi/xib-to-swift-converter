@@ -12,6 +12,10 @@ export function shouldIgnorePropertyDeclaration(tag: string, key: string, declar
         opaque: 'isOpaque = false',
         userInteractionEnabled: 'isUserInteractionEnabled = false',
         customClass: 'customClass =',
+        horizontalHuggingPriority: 'setContentHuggingPriority(UILayoutPriority(251), for: .horizontal)',
+        verticalHuggingPriority: 'setContentHuggingPriority(UILayoutPriority(251), for: .vertical)',
+        horizontalCompressionResistancePriority: 'setContentCompressionResistancePriority(UILayoutPriority(250), for: .horizontal)',
+        verticalCompressionResistancePriority: 'setContentCompressionResistancePriority(UILayoutPriority(250), for: .vertical)'
     }
     return declaration.trim() == `${tag}.${propertyDeclarationsToIgnore[key]}`
 }
@@ -24,7 +28,7 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
         imageView: ['catalog'],
         tableView: ['style'],
         collectionView: ['dataMode'],
-        common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider', 'misplaced', 'userLabel'],
+        common: ['fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider', 'misplaced', 'userLabel'],
     }
     let ignoredProperties = propertyToIgnore['common'] + propertyToIgnore[tag];
     return ignoredProperties.includes(key);

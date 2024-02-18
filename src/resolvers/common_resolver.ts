@@ -3,6 +3,8 @@ import { XibNode } from "../types/entities";
 
 export class Resolve {
 
+    public static propertiesWithSetMethod = ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'verticalCompressionResistancePriority'];
+
     public static Color(node: XibNode): string {
         let declaration: string = '';
         if (node.attrs.customColorSpace == 'genericGamma22GrayColorSpace' || node.attrs.colorSpace == 'genericGamma22GrayColorSpace') {
@@ -46,5 +48,23 @@ export class Resolve {
         }
       
         return declaration;
+    }
+
+    public static resolveSetMethodForProperty(propertyName: string, propertyValue: string): string {
+        const setMethodResolver: any = {
+            'horizontalHuggingPriority': () => {
+                return `setContentHuggingPriority(UILayoutPriority(${propertyValue}), for: .horizontal)`;
+            },
+            'verticalHuggingPriority': () => {
+                return `setContentHuggingPriority(UILayoutPriority(${propertyValue}), for: .vertical)`;
+            },
+            'horizontalCompressionResistancePriority': () => {
+                return `setContentCompressionResistancePriority(UILayoutPriority(${propertyValue}), for: .horizontal)`;
+            },
+            'verticalCompressionResistancePriority': () => {
+                return `setContentCompressionResistancePriority(UILayoutPriority(${propertyValue}), for: .vertical)`;
+            }
+        }
+        return setMethodResolver[propertyName] != undefined ? setMethodResolver[propertyName]() : '';
     }
 }

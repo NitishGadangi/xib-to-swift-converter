@@ -7,7 +7,7 @@ import { resolveIdToPropetyName } from "../types/xib_model";
 export class UIDeclarationsGen {
 
     private declationConfig: UIDeclaraitonConfig = this.setupDeclarationConfig();
-    private uiDeclarationsList: UIDeclaration[] = []
+    private uiDeclarationsList: UIDeclaration[] = [];
 
     private setupDeclarationConfig(node?: XibNode): UIDeclaraitonConfig {
         return {
@@ -27,11 +27,11 @@ export class UIDeclarationsGen {
     }
 
     public generateUIDelarationsAsList(subviews: XibNode[]): UIDeclaration[] {
-        this.uiDeclarationsList = []
+        this.uiDeclarationsList = [];
         for (const subview of subviews) {
             this.resolveUIDeclaration(subview.content);
         }
-        return this.uiDeclarationsList
+        return this.uiDeclarationsList;
     }
 
     private resolveUIDeclaration(nodes: XibNode[]): string {
@@ -64,12 +64,20 @@ export class UIDeclarationsGen {
     }
 
     private resolveAtributes(node: XibNode): string {
-        let attributes = node.attrs
+        let attributes = node.attrs;
         let property: string = '\n';
         for (const key in attributes)  {
             if (shouldIgnoreProperty(node.tag, key)) continue;
 
-            let attributeDeclarion = `\t${node.tag}.${this.resolvePropertyName(node.tag, key)} = ${this.resolveResultValue(attributes[key], key, node)}\n`;
+            let propertyName = this.resolvePropertyName(node.tag, key);
+            let propertyValue = this.resolveResultValue(attributes[key], key, node);
+            let attributeDeclarion: string;
+            if (Resolve.propertiesWithSetMethod.includes(propertyName)) {
+                attributeDeclarion = `\t${node.tag}.${Resolve.resolveSetMethodForProperty(propertyName, propertyValue)}\n`;
+            } else {
+                attributeDeclarion = `\t${node.tag}.${propertyName} = ${propertyValue}\n`;
+            }
+
             if (shouldIgnorePropertyDeclaration(node.tag, key, attributeDeclarion)) continue;
             property += attributeDeclarion;
         }
