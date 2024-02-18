@@ -4,7 +4,7 @@ import { ConstraintsDeclaritonsGen } from '../resolvers/constraints_resolver';
 import { Xib } from '../types/xib_model';
 import { UIDeclaration } from '../types/entities';
 import { AnotationConstants, RegularExpressions } from '../utils/constants';
-import { buildViewSetupCode, indentRelativeToSource } from '../utils/utils';
+import { buildUIDeclarationsInClass, buildViewSetupCode, indentRelativeToSource } from '../utils/utils';
 
 export class Xib2Swift {
     private readonly xib: Xib;
@@ -27,19 +27,28 @@ export class Xib2Swift {
         this.constraintDeclarations = constraintsGenerator.generateConstraintsDeclarations(this.xib.constraints);
     }
 
-    public convert(): string {
+    public convertAsNoob(): string {
         return '\n// MARK: - UI Elements\n' + this.uiDeclarations +
             '\n// MARK: - View Hierachy\n\n' + this.viewHierarchy +
             '\n// MARK: - Constrains\n\n' + this.constraintDeclarations +
             '\n// MARK: - Base View Properties\n\n' + this.baseViewProperties.replaceAll('\t', '');
     }
 
+    public convert(): string {
+        let uiDeclarationsInClass: string = buildUIDeclarationsInClass(this.xib.className, this.xib.parentClassName, this.uiDeclarations);
+        let viewSetupCode: string = buildViewSetupCode(this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
+        return uiDeclarationsInClass +
+            '\n// TODO: Dont forget to add setupViews func in init, viewDidLoad\n' +
+            '// TODO: Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
+            viewSetupCode;
+    }
+
     public convertWithSwiftFile(inputSwiftCode: string): string {
         let swiftCodeWithOutletsReplaced: string = this.replaceOutletsWithUIDeclarations(inputSwiftCode);
         let viewSetupCode: string = buildViewSetupCode(this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
         return swiftCodeWithOutletsReplaced +
-            '\n// TODO: add setupViews func in init, viewDidLoad\n' +
-            '// TODO: This feature is still in Beta. Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
+            '\n// TODO: Dont forget to add setupViews func in init, viewDidLoad\n' +
+            '// TODO: Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
             viewSetupCode;
     }
 
@@ -73,7 +82,7 @@ export class Xib2Swift {
             remainingDeclarations += uiDeclaration.declaration;
         }
         if (remainingDeclarations != '') {
-            remainingDeclarations = '\n// MARK: - Additional UI Elements\n' + remainingDeclarations;
+            remainingDeclarations = '\n// MARK: - Additional UI Elements\n' + remainingDeclarations.trim();
             let remainingDeclarationsCode = indentRelativeToSource(swiftFileAsArray[lastReplacedIndex], remainingDeclarations);
             swiftFileAsArray[lastReplacedIndex] += remainingDeclarationsCode;
         }

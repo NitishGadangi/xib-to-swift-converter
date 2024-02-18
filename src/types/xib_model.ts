@@ -7,7 +7,8 @@ export class Xib {
     private xibNodes: XibNode[] = [];
     private outlets: Outlet[] = [];
 
-    public className: string = '<#ClassName#>'
+    public className: string = '<#ClassName#>';
+    public parentClassName: string = '<#UIViewController or UIView#>';
     public baseView: XibNode | undefined;
     public constraints: XibNode[] = [];
     public subviews: XibNode[] = [];
