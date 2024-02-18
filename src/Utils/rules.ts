@@ -4,10 +4,13 @@ import { Rules } from "../types/entities";
 export const ignoredTags: string[] = []
 
 // properties + value combinations to ignore
-export const defaultRules: any = {
-    opaque: 'isOpaque = false',
-    userInteractionEnabled: 'isUserInteractionEnabled = false',
-    customClass: 'customClass = ',
+export function shouldIgnorePropertyDeclaration(tag: string, key: string, declaration: string): boolean {
+    const propertyDeclarationsToIgnore: any = {
+        opaque: 'isOpaque = false',
+        userInteractionEnabled: 'isUserInteractionEnabled = false',
+        customClass: 'customClass =',
+    }
+    return declaration.trim() == `${tag}.${propertyDeclarationsToIgnore[key]}`
 }
 
 // properties to ignore

@@ -1,5 +1,5 @@
 import { aditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types/entities";
-import { shouldIgnoreProperty, ignoredTags, defaultRules, rules } from "../utils/rules";
+import { shouldIgnoreProperty, ignoredTags, rules, shouldIgnorePropertyDeclaration } from "../utils/rules";
 import { Resolve } from "./common_resolver";
 import { capitalizeFirstLetter, lowerFirstletter } from "../utils/utils";
 import { resolveIdToPropetyName } from "../types/xib_model";
@@ -70,7 +70,7 @@ export class UIDeclarationsGen {
             if (shouldIgnoreProperty(node.tag, key)) continue;
 
             let attributeDeclarion = `\t${node.tag}.${this.resolvePropertyName(node.tag, key)} = ${this.resolveResultValue(attributes[key], key, node)}\n`;
-            if (attributeDeclarion == `\t${node.tag}.${defaultRules[key]}\n`) continue;
+            if (shouldIgnorePropertyDeclaration(node.tag, key, attributeDeclarion)) continue;
             property += attributeDeclarion;
         }
         return property;
