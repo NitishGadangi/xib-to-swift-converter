@@ -4,6 +4,7 @@ import { ConstraintsDeclaritonsGen } from '../resolvers/constraints_resolver';
 import { Xib } from '../types/xib_model';
 import { UIDeclaration } from '../types/entities';
 import { AnotationConstants, RegularExpressions } from '../utils/constants';
+import { buildViewSetupCode, indentRelativeToSource } from '../utils/utils';
 
 export class Xib2Swift {
     private readonly xib: Xib;
@@ -35,7 +36,7 @@ export class Xib2Swift {
 
     public convertWithSwiftFile(inputSwiftCode: string): string {
         let swiftCodeWithOutletsReplaced: string = this.replaceOutletsWithUIDeclarations(inputSwiftCode);
-        let viewSetupCode: string = this.buildViewSetupCode();
+        let viewSetupCode: string = buildViewSetupCode(this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
         return swiftCodeWithOutletsReplaced +
             '\n// TODO: add setupViews func in init, viewDidLoad\n' +
             '// TODO: This feature is still in Beta. Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
@@ -52,7 +53,8 @@ export class Xib2Swift {
                 let uiDeclaration = this.uiDeclarationsAsList[decIdx];
                 let regexPattern: RegExp = RegularExpressions.IBOUTLET_VARNAME(uiDeclaration.viewName);
                 if (regexPattern.test(codeLine)) {
-                    swiftFileAsArray[codeIdx] = uiDeclaration.declaration.trim() + '\n';
+                    let uiDeclarationCode = indentRelativeToSource(codeLine, uiDeclaration.declaration.trim());
+                    swiftFileAsArray[codeIdx] = uiDeclarationCode + '\n';
                     replacedDeclarations.push(uiDeclaration.viewName);
                     lastReplacedIndex = codeIdx;
                     break;
@@ -70,25 +72,12 @@ export class Xib2Swift {
             if (replacedDeclarations.includes(uiDeclaration.viewName)) continue;
             remainingDeclarations += uiDeclaration.declaration;
         }
-        swiftFileAsArray[lastReplacedIndex] += '\n// MARK: - Additional UI Elements\n' + remainingDeclarations;
+        if (remainingDeclarations != '') {
+            remainingDeclarations = '\n// MARK: - Additional UI Elements\n' + remainingDeclarations;
+            let remainingDeclarationsCode = indentRelativeToSource(swiftFileAsArray[lastReplacedIndex], remainingDeclarations);
+            swiftFileAsArray[lastReplacedIndex] += remainingDeclarationsCode;
+        }
 
         return swiftFileAsArray.join('\n');
-    }
-
-    private buildViewSetupCode(): string {
-        return '' +
-            'extension '+ this.xib.className +' {\n' +
-            '\tfunc setupViews() {\n' +
-            '\t\t' + this.baseViewProperties.replaceAll('\t', '') + '\n' +
-            '\t\taddSubViews()\n' +
-            '\t\tsetupConstraints()\n' +
-            '\t}\n\n' +
-            '\tfunc addSubViews() {\n' + 
-            '\t\t' + this.viewHierarchy + '\n' +
-            '\t}\n\n' +
-            '\tfunc setupConstraints() {\n' +
-            '\t\t' + this.constraintDeclarations + '\n' +
-            '\t}\n' +
-            '}\n';
     }
 }

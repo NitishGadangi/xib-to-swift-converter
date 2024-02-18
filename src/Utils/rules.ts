@@ -1,5 +1,6 @@
 import { Rules } from "../types/entities";
 
+// tags in xib that can be ignored
 export const ignoredTags: string[] = []
 
 // properties + value combinations to ignore
