@@ -25,7 +25,7 @@ export interface Rules {
     }
 }
 
-export interface aditionalConfiguration {
+export interface AditionalConfiguration {
     [tag: string]: {
         [key: string]: () => string
     }

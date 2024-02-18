@@ -1,4 +1,4 @@
-import { ignoredTags } from "../utils/rules";
+import { shouldIgnoreTag } from "../utils/rules";
 import { XibNode } from "../types/entities";
 import { resolveIdToPropetyName } from "../types/xib_model"
 
@@ -9,7 +9,7 @@ export class ViewHierachyGen {
         let addMethod = subview.father?.tag == 'stackView' ? 'addArrangedSubview' : 'addSubview';
         if (!fatherId) { return; }
         for (const node of subview.content) {
-            if (!ignoredTags.includes(node.tag)) {
+            if (!shouldIgnoreTag(node.tag)) {
                 heriachyDeclaration += `${resolveIdToPropetyName(fatherId)}.${addMethod}(${resolveIdToPropetyName(node.attrs.id)})\n`;
             }
         }

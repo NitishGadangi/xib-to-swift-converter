@@ -1,7 +1,10 @@
 import { Rules } from "../types/entities";
 
 // tags in xib that can be ignored
-export const ignoredTags: string[] = []
+export function shouldIgnoreTag(tag: string): boolean {
+    const ignoredTags: string[] = [];
+    return ignoredTags.includes(tag);
+}
 
 // properties + value combinations to ignore
 export function shouldIgnorePropertyDeclaration(tag: string, key: string, declaration: string): boolean {
@@ -23,28 +26,34 @@ export function shouldIgnoreProperty(tag: string, key: string): boolean {
         collectionView: ['dataMode'],
         common: ['horizontalHuggingPriority', 'verticalHuggingPriority', 'horizontalCompressionResistancePriority', 'fixedFrame', 'id', 'adjustsLetterSpacingToFitWidth', 'customModule', 'customModuleProvider', 'misplaced', 'userLabel'],
     }
-    let ignoredRules = propertyToIgnore['common'] + propertyToIgnore[tag];
-    return ignoredRules.includes(key);
+    let ignoredProperties = propertyToIgnore['common'] + propertyToIgnore[tag];
+    return ignoredProperties.includes(key);
 }
 
 // xib properties which are named differently in swift uikit
-export const rules: Rules = {
-    label: {
-        adjustsFontSizeToFit: 'adjustsFontSizeToFitWidth',
-    },
-    slider: {
-        minValue: 'minimumValue',
-        maxValue: 'maximumValue',
-    },
-    collectionView: {
-        multipleTouchEnabled: 'isMultipleTouchEnabled',
-        directionalLockEnabled: 'isDirectionalLockEnabled',
-        pagingEnabled: 'isPagingEnabled',
-        prefetchingEnabled: 'isPrefetchingEnabled',
-    },
-    common: {
-        clipsSubviews: 'clipsToBounds',
-        opaque: 'isOpaque',
-        userInteractionEnabled: 'isUserInteractionEnabled',
+export function castPropertyIfNeeded(tag: string, key: string): string {
+    const propertiesToCast: Rules = {
+        label: {
+            adjustsFontSizeToFit: 'adjustsFontSizeToFitWidth',
+        },
+        slider: {
+            minValue: 'minimumValue',
+            maxValue: 'maximumValue',
+        },
+        collectionView: {
+            multipleTouchEnabled: 'isMultipleTouchEnabled',
+            directionalLockEnabled: 'isDirectionalLockEnabled',
+            pagingEnabled: 'isPagingEnabled',
+            prefetchingEnabled: 'isPrefetchingEnabled',
+        },
+        common: {
+            clipsSubviews: 'clipsToBounds',
+            opaque: 'isOpaque',
+            userInteractionEnabled: 'isUserInteractionEnabled',
+        }
     }
+    if (propertiesToCast[tag] != undefined && propertiesToCast[tag][key] != undefined) {
+        return propertiesToCast[tag][key];
+    }
+    return propertiesToCast['common'][key] ?? key;
 }

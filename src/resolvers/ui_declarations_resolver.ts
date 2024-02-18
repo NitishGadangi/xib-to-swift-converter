@@ -1,5 +1,5 @@
-import { aditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types/entities";
-import { shouldIgnoreProperty, ignoredTags, rules, shouldIgnorePropertyDeclaration } from "../utils/rules";
+import { AditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types/entities";
+import { shouldIgnoreProperty, shouldIgnorePropertyDeclaration, castPropertyIfNeeded, shouldIgnoreTag } from "../utils/rules";
 import { Resolve } from "./common_resolver";
 import { capitalizeFirstLetter, lowerFirstletter } from "../utils/utils";
 import { resolveIdToPropetyName } from "../types/xib_model";
@@ -36,7 +36,7 @@ export class UIDeclarationsGen {
 
     private resolveUIDeclaration(nodes: XibNode[]): string {
         let uiDeclarations: string = '';
-        nodes = nodes.filter(node => ignoredTags.includes(node.tag) == false);
+        nodes = nodes.filter(node => shouldIgnoreTag(node.tag) == false);
     
         for (const node of nodes) {
             this.declationConfig = this.setupDeclarationConfig(node);
@@ -77,12 +77,10 @@ export class UIDeclarationsGen {
     }
 
     private resolvePropertyName(tag: string, key: string): string {
-        if (rules[tag] == undefined) return rules['common'][key] ?? key;
-        return rules[tag][key] != undefined ? rules[tag][key] : rules['common'][key] ?? key;
+        return castPropertyIfNeeded(tag, key);
     }
 
     private resolveResultValue(result: string, property: string, node?: XibNode): string {
-    
         const propertyToResolve: any = {
             'text': () => { return `"${result}"`; },
             'image': () => { return node != undefined ? `${Resolve.Image(node)}`: ''; },
@@ -127,7 +125,7 @@ export class UIDeclarationsGen {
     }
 
     private resolveSubNode(tag: string, node: XibNode): string {
-        const addAditionalConfiguration: aditionalConfiguration = {
+        const addAditionalConfiguration: AditionalConfiguration = {
             'button': {
                 'state': () => {                
                     let property = ``;
