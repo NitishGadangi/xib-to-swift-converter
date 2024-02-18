@@ -56,8 +56,9 @@ export class Xib2Swift {
         let swiftFileAsArray: string[] = swiftFile.split('\n');
         let replacedDeclarations: string[] = [];
         let lastReplacedIndex = swiftFileAsArray.length - 1;
-        for (let codeIdx = 0; codeIdx < swiftFileAsArray.length; codeIdx++) {
-            let codeLine = swiftFileAsArray[codeIdx];
+
+        // inject viewDeclarations inplace of IBOutlets
+        swiftFileAsArray.forEach((codeLine, codeIdx) => {
             for (let decIdx = 0; decIdx < this.uiDeclarationsAsList.length; decIdx++) {
                 let uiDeclaration = this.uiDeclarationsAsList[decIdx];
                 let regexPattern: RegExp = RegularExpressions.IBOUTLET_VARNAME(uiDeclaration.viewName);
@@ -73,14 +74,15 @@ export class Xib2Swift {
             if (finalCodeLine.includes(AnotationConstants.IB_ACTION)) {
                 swiftFileAsArray[codeIdx] = finalCodeLine.replace(AnotationConstants.IB_ACTION, AnotationConstants.OBJC);
             }
-        }
+        });
 
+        // append remaining viewDeclarations at the end, if any.
         let remainingDeclarations: string = ''
-        for (let decIdx = 0; decIdx < this.uiDeclarationsAsList.length; decIdx++) {
-            let uiDeclaration = this.uiDeclarationsAsList[decIdx];
-            if (replacedDeclarations.includes(uiDeclaration.viewName)) continue;
-            remainingDeclarations += uiDeclaration.declaration;
-        }
+        this.uiDeclarationsAsList.forEach((uiDeclaration) => {
+            if (!replacedDeclarations.includes(uiDeclaration.viewName)) {
+                remainingDeclarations += uiDeclaration.declaration;
+            }
+        });
         if (remainingDeclarations != '') {
             remainingDeclarations = '\n// MARK: - Additional UI Elements\n' + remainingDeclarations.trim();
             let remainingDeclarationsCode = indentRelativeToSource(swiftFileAsArray[lastReplacedIndex], remainingDeclarations);
