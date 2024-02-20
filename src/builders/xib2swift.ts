@@ -39,9 +39,10 @@ export class Xib2Swift {
 
     public convert(): string {
         let uiDeclarationsInClass: string = buildUIDeclarationsInClass(this.xib.className, this.xib.parentClassName, this.uiDeclarations);
-        let viewSetupCode: string = buildViewSetupCode(this.rules.setupFunctionName(), this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
+        let setupFuncName: string = this.rules.setupFunctionName();
+        let viewSetupCode: string = buildViewSetupCode(setupFuncName, this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
         return uiDeclarationsInClass +
-            '\n// TODO: Dont forget to add setupViews func in init, viewDidLoad\n' +
+            '\n// TODO: Dont forget to add ' + setupFuncName + ' func in init, viewDidLoad\n' +
             '// TODO: Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
             viewSetupCode;
     }
