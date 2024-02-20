@@ -14,6 +14,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fullySpecified: false,
   },
   output: {
     path: path.resolve(__dirname, './website'),
