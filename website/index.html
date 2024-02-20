@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Xib to Swift Converter</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="menu">
-        <button id="generate-button">Convert</button>
-    </div>
-    <div id="box">
-        <div class="textbox">
-            <textarea name="input-Text" id="input-Text" cols="30" rows="10" placeholder="Add xib file code here"></textarea>
-        </div>
-        <div class="textbox">
-            <textarea name="swift-code" id="swift-code" cols="30" rows="10" placeholder="(optional) Add corresponding swift(View/ViewController) file code here to inject View Declarations, Hierarchy and Constrains inplace."></textarea>
-        </div>
-        <div class="textbox">
-            <textarea name="output-Text" id="output-Text" cols="30" rows="10" placeholder="Output will be generated here"></textarea>
+    <div class="container">
+        <h1>Xib to Swift Converter</h1>
+        <form id="converterForm">
+            <div class="input-group">
+                <label for="xib-code">Xib File (required):</label>
+                <textarea id="xib-code" name="xibString" required rows="10" placeholder="Paste your xib file code here"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="swift-code">Supporting Swift File (optional):</label>
+                <textarea id="swift-code" name="swiftFile" rows="10" placeholder="Provide corresponding Swift(View/ViewController) file code here to inject View Declarations, Hierarchy and Constrains inplace"></textarea>
+            </div>
+            <div class="input-group">
+                <label for="configuration">Parser Configuration (modify if needed):</label>
+                <textarea id="configuration" name="configuration" rows="5" placeholder="Default parser configuration"></textarea>
+            </div>
+            <button type="submit">Convert</button>
+        </form>
+        <div class="output-container">
+            <label for="output-code">Output:</label>
+            <textarea id="output-code" name="output" rows="15" placeholder="Generated output swift code will appear here" readonly></textarea>
         </div>
     </div>
     <script src="bundle.js"></script>
 </body>
-
 </html>

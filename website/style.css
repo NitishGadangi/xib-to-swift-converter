@@ -1,52 +1,62 @@
-body { 
-    min-height: 100vh; 
-    background-color: whitesmoke;
+body {
+    font-family: sans-serif;
     margin: 0;
-    padding: 0;
-}
-
-#menu {
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 30px;
-    background-color: blue;
-    color: white;
-    font-size: 20px;
-    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
 }
 
-#box {
-    display: flex;
-    flex-direction: row;
+.container {
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
-    border-radius: 5px;
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-    resize: none;
+    max-width: 800px;
 }
 
-.textbox {
-    width: 33.33%;
-    height: 100%;
-    border: 1px solid black;
-    padding: 20px;
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 textarea {
     width: 100%;
-    height: 100%;
-    border: none;
-    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-family: inherit;
+    resize: vertical;
 }
 
-@media screen and (max-width: 1024px) {
-    .textbox {
-        width: 100%;
-        height: 50%;
-    }
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #46a049;
+}
+
+.output-container {
+    margin-top: 20px;
+}
+
+#output-code {
+    background-color: #f8f8f8;
 }
