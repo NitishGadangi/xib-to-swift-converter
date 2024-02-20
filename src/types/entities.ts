@@ -19,12 +19,6 @@ export interface IDtoName {
     [id: string]: string
 }
 
-export interface Rules {
-    [tag: string]: {
-        [key: string]: string
-    }
-}
-
 export interface AditionalConfiguration {
     [tag: string]: {
         [key: string]: () => string
@@ -50,4 +44,26 @@ export interface UIDeclaraitonConfig {
 export interface UIDeclaration {
     viewName: string,
     declaration: string
+}
+
+export interface PropertiesToCast {
+    [tag: string]: {
+        [key: string]: string
+    }
+}
+
+export interface PropertyDeclarationsToIgnore {
+    [key: string]: string;
+}
+
+export interface PropertiesToIgnore {
+    [key: string]: string[];
+}
+
+export interface ParserConfiguration {
+    setupFunctionName?: string;
+    tagsToIgnore?: string[];
+    propertyDeclarationsToIgnore?: PropertyDeclarationsToIgnore;
+    propertiesToIgnore?: PropertiesToIgnore;
+    propertiesToCast?: PropertiesToCast;
 }

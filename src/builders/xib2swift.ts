@@ -2,9 +2,10 @@ import { UIDeclarationsGen } from '../resolvers/ui_declarations_resolver';
 import { ViewHierachyGen } from '../resolvers/view_hierarchy_resolver';
 import { ConstraintsDeclaritonsGen } from '../resolvers/constraints_resolver';
 import { Xib } from '../types/xib_model';
-import { UIDeclaration } from '../types/entities';
+import { ParserConfiguration, UIDeclaration } from '../types/entities';
 import { AnotationConstants, RegularExpressions } from '../utils/constants';
 import { buildUIDeclarationsInClass, buildViewSetupCode, indentRelativeToSource } from '../utils/utils';
+import { RuleEngine } from '../utils/rules';
 
 export class Xib2Swift {
     private readonly xib: Xib;
@@ -13,12 +14,14 @@ export class Xib2Swift {
     private readonly viewHierarchy: string;
     private readonly constraintDeclarations: string;
     private readonly baseViewProperties: string;
+    private readonly rules: RuleEngine;
 
-    constructor(xibFile: string) {
+    constructor(xibFile: string, configuration: ParserConfiguration = {}) {
         this.xib = new Xib(xibFile);
+        this.rules = new RuleEngine(configuration);
         const subviews = this.xib.subviews;
-        const uiDeclarationsGenerator = new UIDeclarationsGen();
-        const viewHierarchyGenerator = new ViewHierachyGen();
+        const uiDeclarationsGenerator = new UIDeclarationsGen(this.rules);
+        const viewHierarchyGenerator = new ViewHierachyGen(this.rules);
         const constraintsGenerator = new ConstraintsDeclaritonsGen();
         this.uiDeclarations = uiDeclarationsGenerator.generateUIDeclarations(subviews);
         this.uiDeclarationsAsList = uiDeclarationsGenerator.generateUIDelarationsAsList(subviews);
@@ -36,7 +39,7 @@ export class Xib2Swift {
 
     public convert(): string {
         let uiDeclarationsInClass: string = buildUIDeclarationsInClass(this.xib.className, this.xib.parentClassName, this.uiDeclarations);
-        let viewSetupCode: string = buildViewSetupCode(this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
+        let viewSetupCode: string = buildViewSetupCode(this.rules.setupFunctionName(), this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
         return uiDeclarationsInClass +
             '\n// TODO: Dont forget to add setupViews func in init, viewDidLoad\n' +
             '// TODO: Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +
@@ -45,7 +48,7 @@ export class Xib2Swift {
 
     public convertWithSwiftFile(inputSwiftCode: string): string {
         let swiftCodeWithOutletsReplaced: string = this.replaceOutletsWithUIDeclarations(inputSwiftCode);
-        let viewSetupCode: string = buildViewSetupCode(this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
+        let viewSetupCode: string = buildViewSetupCode(this.rules.setupFunctionName(), this.xib.className, this.baseViewProperties, this.viewHierarchy, this.constraintDeclarations);
         return swiftCodeWithOutletsReplaced +
             '\n// TODO: Dont forget to add setupViews func in init, viewDidLoad\n' +
             '// TODO: Incase any indentation error, use shortcut Cmd A + Ctrl I to fix\n' +

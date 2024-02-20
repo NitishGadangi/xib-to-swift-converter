@@ -3,10 +3,10 @@ import { resolveIdToPropetyName } from "../types/xib_model";
 
 export class ConstraintsDeclaritonsGen {
 
-    private constraints: Constraints 
+    private constraints: Constraints;
 
     public constructor() {
-        this.constraints =  {};
+        this.constraints = {};
     }
 
     public generateConstraintsDeclarations(nodes: XibNode[]): string {
@@ -18,19 +18,19 @@ export class ConstraintsDeclaritonsGen {
 
     private resolveConstraintsDeclarations(nodes: XibNode[]): void {
 
-        for (const node of nodes) { 
-            
+        for (const node of nodes) {
+
             let grandFather = node.father?.father;
             if (grandFather == undefined) { console.log('\nerror\n'); continue; }
 
             let parameters = node.attrs.constant != undefined ? `, constant: ${node.attrs.constant}` : '';
-            parameters += node.attrs.multiplier != undefined ? `, multiplier: ${node.attrs.multiplier.replace(':','/')}` : '';
-            
+            parameters += node.attrs.multiplier != undefined ? `, multiplier: ${node.attrs.multiplier.replace(':', '/')}` : '';
+
             if ((node.attrs.firstAttribute == 'width' || node.attrs.firstAttribute == 'height') && node.attrs.secondItem == undefined) {
                 this.generateConstraintWithConstant(
                 /*   element  */    resolveIdToPropetyName(grandFather.attrs.id),
                 /*    anchor  */    node.attrs.firstAttribute,
-                /*   constant  */   node.attrs.constant );
+                /*   constant  */   node.attrs.constant);
             }
             else if (node.attrs.firstItem == undefined) {
                 this.generateConstraint(
@@ -38,7 +38,7 @@ export class ConstraintsDeclaritonsGen {
                 /*    anchor  */    node.attrs.firstAttribute,
                 /* secondElement */ resolveIdToPropetyName(node.attrs.secondItem),
                 /* secondAnchor  */ node.attrs.secondAttribute.replace('Margin', ''),
-                /*   parameters  */ parameters );
+                /*   parameters  */ parameters);
             }
             else {
                 this.generateConstraint(
@@ -46,7 +46,7 @@ export class ConstraintsDeclaritonsGen {
                 /*    anchor  */    node.attrs.firstAttribute,
                 /* secondElement */ resolveIdToPropetyName(node.attrs.secondItem),
                 /* secondAnchor  */ node.attrs.secondAttribute.replace('Margin', ''),
-                /*   parameters  */ parameters );
+                /*   parameters  */ parameters);
             }
         }
     }

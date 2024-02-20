@@ -1,5 +1,5 @@
 import { AditionalConfiguration, UIDeclaraitonConfig, UIDeclaration, XibNode } from "../types/entities";
-import { shouldIgnoreProperty, shouldIgnorePropertyDeclaration, castPropertyIfNeeded, shouldIgnoreTag } from "../utils/rules";
+import { RuleEngine } from "../utils/rules";
 import { Resolve } from "./common_resolver";
 import { capitalizeFirstLetter, lowerFirstletter } from "../utils/utils";
 import { resolveIdToPropetyName } from "../types/xib_model";
@@ -8,6 +8,11 @@ export class UIDeclarationsGen {
 
     private declationConfig: UIDeclaraitonConfig = this.setupDeclarationConfig();
     private uiDeclarationsList: UIDeclaration[] = [];
+    private rules: RuleEngine;
+
+    constructor(rules: RuleEngine) {
+        this.rules = rules;
+    }
 
     private setupDeclarationConfig(node?: XibNode): UIDeclaraitonConfig {
         return {
@@ -36,8 +41,8 @@ export class UIDeclarationsGen {
 
     private resolveUIDeclaration(nodes: XibNode[]): string {
         let uiDeclarations: string = '';
-        nodes = nodes.filter(node => shouldIgnoreTag(node.tag) == false);
-    
+        nodes = nodes.filter(node => this.rules.shouldIgnoreTag(node.tag) == false);
+
         for (const node of nodes) {
             this.declationConfig = this.setupDeclarationConfig(node);
             let nodeTag: string = node.tag;
@@ -56,18 +61,18 @@ export class UIDeclarationsGen {
     }
 
     private buildUIDeclaration(viewName: string, nodeTag: string, properties: string): string {
-        return `\n${this.declationConfig.visibliityModifier}let ${viewName}: ${this.declationConfig.type} = {\n` + 
-                `${this.declationConfig.beforeInstaceProperties}`+
-                `\tlet ${nodeTag} = ${this.declationConfig.type}${this.declationConfig.intializationMethod}` +
-                `${properties}` +
-                `\treturn ${nodeTag}\n}()\n`;
+        return `\n${this.declationConfig.visibliityModifier}let ${viewName}: ${this.declationConfig.type} = {\n` +
+            `${this.declationConfig.beforeInstaceProperties}` +
+            `\tlet ${nodeTag} = ${this.declationConfig.type}${this.declationConfig.intializationMethod}` +
+            `${properties}` +
+            `\treturn ${nodeTag}\n}()\n`;
     }
 
     private resolveAtributes(node: XibNode): string {
         let attributes = node.attrs;
         let property: string = '\n';
-        for (const key in attributes)  {
-            if (shouldIgnoreProperty(node.tag, key)) continue;
+        for (const key in attributes) {
+            if (this.rules.shouldIgnoreProperty(node.tag, key)) continue;
 
             let propertyName = this.resolvePropertyName(node.tag, key);
             let propertyValue = this.resolveResultValue(attributes[key], key, node);
@@ -78,23 +83,23 @@ export class UIDeclarationsGen {
                 attributeDeclarion = `\t${node.tag}.${propertyName} = ${propertyValue}\n`;
             }
 
-            if (shouldIgnorePropertyDeclaration(node.tag, key, attributeDeclarion)) continue;
+            if (this.rules.shouldIgnorePropertyDeclaration(node.tag, key, attributeDeclarion)) continue;
             property += attributeDeclarion;
         }
         return property;
     }
 
     private resolvePropertyName(tag: string, key: string): string {
-        return castPropertyIfNeeded(tag, key);
+        return this.rules.castPropertyIfNeeded(tag, key);
     }
 
     private resolveResultValue(result: string, property: string, node?: XibNode): string {
         const propertyToResolve: any = {
             'text': () => { return `"${result}"`; },
-            'image': () => { return node != undefined ? `${Resolve.Image(node)}`: ''; },
-            'customClass': () => { 
+            'image': () => { return node != undefined ? `${Resolve.Image(node)}` : ''; },
+            'customClass': () => {
                 this.declationConfig.type = result;
-                return ''; 
+                return '';
             },
             'lineBreakMode': () => {
                 let lineBreakModes: any = {
@@ -135,12 +140,12 @@ export class UIDeclarationsGen {
     private resolveSubNode(tag: string, node: XibNode): string {
         const addAditionalConfiguration: AditionalConfiguration = {
             'button': {
-                'state': () => {                
+                'state': () => {
                     let property = ``;
                     property += node.attrs.title != undefined ? `\t${tag}.setTitle("${node.attrs.title ?? ''}", for: .${node.attrs.key})\n` : '';
                     property += node.attrs.image != undefined ? `\t${tag}.setImage(${Resolve.Image(node)}, for: .${node.attrs.key})\n` : '';
                     property += node.attrs.backgroundImage != undefined ? `\t${tag}.setBackgroundImage(${Resolve.Image(node)}, for: .${node.attrs.key})\n` : '';
-                   
+
                     let children = node.content;
                     for (const child of children) {
                         if (child.tag == 'color') {
@@ -152,11 +157,11 @@ export class UIDeclarationsGen {
                     }
                     return property;
                 },
-                'fontDescription': () => { 
+                'fontDescription': () => {
                     let weight = node.attrs.weight != undefined ? `, weight: .${node.attrs.weight}` : '';
-                    return `\t${tag}.titleLabel?.font = .systemFont(ofSize: ${node.attrs.pointSize}${weight})\n` 
+                    return `\t${tag}.titleLabel?.font = .systemFont(ofSize: ${node.attrs.pointSize}${weight})\n`
                 },
-                'buttonConfiguration': () => { 
+                'buttonConfiguration': () => {
                     let property = `\t${tag}.configuration = .${node.attrs.style}()\n`;
                     property += `\t${tag}.setTitle("${node.attrs.title ?? ''}", for: .normal)\n`;
 
@@ -169,7 +174,7 @@ export class UIDeclarationsGen {
                     return property;
                 },
             },
-           'collectionView': {
+            'collectionView': {
                 'collectionViewFlowLayout': () => {
                     let property = '\tlet layout = UICollectionViewFlowLayout()\n';
                     let ignoredAttributes = ['id', 'key'];
@@ -187,27 +192,27 @@ export class UIDeclarationsGen {
                     this.declationConfig.intializationMethod = '(frame: .zero, collectionViewLayout: layout)';
                     return '';
                 },
-           },
-           "textField": {
-                "textInputTraits": () => { 
+            },
+            "textField": {
+                "textInputTraits": () => {
                     let property = '';
                     property += node.attrs.keyboardType != undefined ? `\t${tag}.keyboardType = .${node.attrs.keyboardType}\n` : '';
                     return property;
                 },
             },
             'common': {
-                'color': () => { return `\t${tag}.${node.attrs.key} = ${Resolve.Color(node)}\n`},
-                'fontDescription': () => { 
+                'color': () => { return `\t${tag}.${node.attrs.key} = ${Resolve.Color(node)}\n` },
+                'fontDescription': () => {
                     let weight = node.attrs.weight != undefined ? `, weight: .${node.attrs.weight}` : '';
-                    return `\t${tag}.font = .systemFont(ofSize: ${node.attrs.pointSize}${weight})\n` 
+                    return `\t${tag}.font = .systemFont(ofSize: ${node.attrs.pointSize}${weight})\n`
                 },
                 //'rect': () => { return `\t${tag}.frame = CGRect(x: ${node.attrs.x}, y: ${node.attrs.y}, width: ${node.attrs.width}, height: ${node.attrs.height})\n` },
-                'connections': () => {    
+                'connections': () => {
                     let property = '';
                     let children = node.content;
                     for (const child of children) {
                         if (child.tag == 'action') {
-                            property += `\t${tag}.addTarget(self, action: #selector(${child.attrs.selector.replace(':','')}), for: .${child.attrs.eventType})\n`;
+                            property += `\t${tag}.addTarget(self, action: #selector(${child.attrs.selector.replace(':', '')}), for: .${child.attrs.eventType})\n`;
                         }
                     }
                     return property
@@ -220,11 +225,11 @@ export class UIDeclarationsGen {
                             let number = child.content[0];
                             property += `\t${tag}.${child.attrs.keyPath} = ${number.attrs.value}\n`;
                         }
-                        else if ( child.attrs.type == 'size') {
+                        else if (child.attrs.type == 'size') {
                             let size = child.content[0];
                             property += `\t${tag}.${child.attrs.keyPath} = CGSize(width: ${size.attrs.width}, height: ${size.attrs.height})\n`;
                         }
-                        else if ( child.attrs.type == 'color') {
+                        else if (child.attrs.type == 'color') {
                             let color = child.content[0];
                             property += color != undefined ? `\t${tag}.${child.attrs.keyPath} = ${Resolve.Color(color)}\n` : '';
                         }
@@ -233,14 +238,14 @@ export class UIDeclarationsGen {
                 },
             }
         }
-        
-        if (addAditionalConfiguration[tag] == undefined || addAditionalConfiguration[tag][node.tag] == undefined)  {
+
+        if (addAditionalConfiguration[tag] == undefined || addAditionalConfiguration[tag][node.tag] == undefined) {
             return addAditionalConfiguration['common'][node.tag] != undefined ? addAditionalConfiguration['common'][node.tag]() : '';
         }
         return addAditionalConfiguration[tag][node.tag] != undefined ? addAditionalConfiguration[tag][node.tag]() : ''
     }
 
-    public genereteBaseViewProperties(baseView?: XibNode): string { 
+    public genereteBaseViewProperties(baseView?: XibNode): string {
         let property: string = '';
         if (baseView == undefined) return property;
         for (const node of baseView.content) {

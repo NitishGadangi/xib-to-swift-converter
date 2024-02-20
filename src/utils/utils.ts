@@ -51,11 +51,11 @@ export function getTopCommentForFile(className: string) {
         '//\n\n';
 }
 
-export function buildViewSetupCode(className: string, baseViewProperties: string, viewHierarchy: string, constraintDeclarations: string): string {
+export function buildViewSetupCode(setupFuncName: string, className: string, baseViewProperties: string, viewHierarchy: string, constraintDeclarations: string): string {
     baseViewProperties = baseViewProperties.replaceAll('\t', '');
     return '' +
         'extension ' + className + ' {\n' +
-        '\tfunc setupViews() {\n' +
+        '\tfunc '+ setupFuncName + '() {\n' +
         appendToEveryNewLine('\t\t', baseViewProperties) + '\n' +
         '\t\taddSubViews()\n' +
         '\t\tsetupConstraints()\n' +

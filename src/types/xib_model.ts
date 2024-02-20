@@ -13,13 +13,13 @@ export class Xib {
     public constraints: XibNode[] = [];
     public subviews: XibNode[] = [];
     public tableIDtoName: IDtoName = {};
-   
+
     public constructor(xib: string) {
         this.xibNodes = parser(xib, { xmlMode: true }) as XibNode[];
         this.xibNodes = this.clearEmptyNodes(this.xibNodes);
         this.navigateGettingInterestPoints(this.xibNodes);
         Xib.instace = this;
-    }   
+    }
 
     private clearEmptyNodes(nodes: XibNode[], father?: XibNode): XibNode[] {
         let result: XibNode[] = [];
@@ -81,15 +81,15 @@ export class Xib {
         let father = node.father;
         if (father == undefined) return;
         this.baseView = father;
-        if (father.attrs.id == undefined ){
+        if (father.attrs.id == undefined) {
             this.baseView = father.father;
             father.attrs.id = father.father?.attrs.id ?? 'baseView';
         }
-        if (father.attrs.key != undefined ){
+        if (father.attrs.key != undefined) {
             this.tableIDtoName[father.attrs.id] = father.attrs.key;
         }
     }
-    
+
 }
 
 export function resolveIdToPropetyName(id: string): string {
