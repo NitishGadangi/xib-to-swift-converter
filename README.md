@@ -16,7 +16,6 @@
   <h4 align="center">Try out the tool now! Just use the <a href="https://nitishgadangi.github.io/xib-to-swift-converter/">Online Converter</a>.</h3>
   </p>
 </p>
-</br>
 <hr/>
 <br>
 
