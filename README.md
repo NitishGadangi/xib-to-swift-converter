@@ -121,18 +121,18 @@ Will update soon -->
 Its always advisable to do enough testing on the generated code before pushing it to production.
 
 However, here are some of the Known Issues
-- Currently, there is no support to resolve `NSLayoutConstrants` what they are used via `IBOutlets`. [ *This support will soon be added.* ]
+- Currently, there is no support to resolve `NSLayoutConstraint` when they are used via `IBOutlets`. [ *This support will soon be added.* ]
 - A few instances the constraints were breaking or might be missing. [ *This issue will be resolved in next release.* ]
 - Rest.. You say ! Feel free to [raise a bug here](https://github.com/NitishGadangi/xib-to-swift-converter/issues), whenever you face any issue.
 
 ## Contribute
-You can setup the project and start building in few simple steps
+You can setup the project and start building in a few simple steps
 1. Make sure `node` and `npm` are setup on your machine.
-2. With the projects root directory.
+2. Within the projects root directory.
    ```bash
    npm install
    ```
-3. To build for web. Run below command and open `./website/index.html` file in any Web Browser.
+3. To build for web. Run the below command and open `./website/index.html` file in any Web Browser.
     ```bash
     npm run build-web
     ```
