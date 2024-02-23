@@ -13,7 +13,8 @@
     .
    <a href="https://github.com/NitishGadangi/xib-to-swift-converter/releases">Download Executable</a>
   
-  <h4 align="center">Try out the tool now! Just use the <a href="https://nitishgadangi.github.io/xib-to-swift-converter/">Online Converter</a>.</h3>
+  <h4 align="center">Try out the tool now! Just use the <a href="https://nitishgadangi.github.io/xib-to-swift-converter/">Online Converter</a>.</h4>
+  <h4 align="center">Consider giving a ⭐️ if you found this tool useful.</h4>
   </p>
 </p>
 <hr/>
